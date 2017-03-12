@@ -1,0 +1,7 @@
+<view class="container">
+    <image class="user_avatar" src="/images/round.jpg"></image>
+    <text class="user_name"><text style="color:red">Hello</text> hibern8!</text>
+    <view class="moto_container" bindtap="onTap">
+        <text class="user_moto">开启小程序之旅</text> 
+    </view>
+</view>
