@@ -1,4 +1,5 @@
-var postsData = require('../../../data/posts-data.js')
+var postsData = require('../../../data/posts-data.js');
+var app = getApp();
 Page({
     data: {
         isPlayingMusic: false
@@ -25,7 +26,37 @@ Page({
             wx.setStorageSync('posts_collected', postsCollected);
         }
 
+        if(app.globalData.g_isPlayingMusic && app.globalData.g_currentMusicPostId
+        === postId){
+            this.setData({
+                isPlayingMusic : true
+            })
+        }
+
+        this.setMusicMonitor();
+
     },
+
+    setMusicMonitor:function(){
+        var that = this;
+        wx.onBackgroundAudioPlay(function () {
+            // callback
+            that.setData({
+                isPlayingMusic: true
+            })
+            app.globalData.g_isPlayingMusic = true;
+            app.globalData.g_currentMusicPostId = that.data.currentPostId;
+        })
+        wx.onBackgroundAudioPause(function () {
+            // callback
+            that.setData({
+                isPlayingMusic: false
+            })
+            app.globalData.g_isPlayingMusic = false;
+            app.globalData.g_currentMusicPostId = null;
+        })
+    },
+
     onCollectionTap: function (event) {
         this.getPostsCollectedSyc();
         // this.getPostsCollectedAsy();
@@ -112,6 +143,7 @@ Page({
             }
         })
     },
+
     onMusicTap: function (event) {
         var currentPostId = this.data.currentPostId;
         var postData = postsData.postList[currentPostId];
@@ -119,17 +151,17 @@ Page({
         if (isPlayingMusic) {
             wx.pauseBackgroundAudio();
             this.setData({
-                isPlayingMusic:false
+                isPlayingMusic: false
             })
 
         } else {
-            wx.playBackgroundAudio({             
+            wx.playBackgroundAudio({
                 dataUrl: postData.music.url,
                 title: postData.music.title,
                 coverImgUrl: postData.music.coverImg
             });
             this.setData({
-                isPlayingMusic:true
+                isPlayingMusic: true
             })
         }
 
